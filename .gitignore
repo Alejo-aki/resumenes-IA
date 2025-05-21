@@ -1,0 +1,12 @@
+#Archivos del sistema
+.DS_Store
+
+#Carpetas del editor
+.vscode/
+.idea/
+
+#Carpeta de configuración interna de Bolt
+.bolt/
+
+#Archivos de logs
+*.log
