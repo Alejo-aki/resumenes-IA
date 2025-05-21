@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Transcripción y Resumen de Clases con IA</title>
+  <!-- Fuente moderna para la interfaz -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+  <!-- Integración de MathJax para fórmulas matemáticas -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <!-- Enlace a la hoja de estilos externa -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Resumen de Clases con IA</h1>
+    <p>Transcribe, resume y pregunta sobre tus clases</p>
+  </header>
+
+  <div class="controls">
+    <button id="startButton">Iniciar Grabación</button>
+    <button id="stopButton" disabled>Detener Grabación</button>
+  </div>
+
+  <div class="container">
+    <!-- Panel Izquierdo: Transcripción, Resumen y Notebooks -->
+    <div class="left-panel">
+      <div class="section">
+        <h2>Transcripción en Tiempo Real</h2>
+        <div id="transcription" class="transcription">Aquí se mostrará la transcripción...</div>
+      </div>
+      <div class="section">
+        <h2>Resumen de la Clase</h2>
+        <!-- Nota: las fórmulas deben estar delimitadas por \( ... \) o $$ ... $$ para MathJax -->
+        <div id="summary" class="summary">Esperando resumen...</div>
+      </div>
+      <div class="section">
+        <h2>Mis Clases Guardadas</h2>
+        <button id="saveClassButton">Guardar Clase Actual</button>
+        <button id="viewClassesButton">Ver Clases Guardadas</button>
+        <div id="notebooksDisplay" class="notebooks-list">
+          Aún no has guardado ninguna clase.
+        </div>
+      </div>
+    </div>
+    <!-- Panel Derecho: Chat Interactivo -->
+    <div class="right-panel">
+      <div class="section">
+        <h2>Chat de Preguntas</h2>
+        <div id="chatHistory" class="chat-history">
+          Bienvenido al chat. Haz preguntas sobre la clase.
+        </div>
+        <div class="chat-input">
+          <input type="text" id="chatInput" placeholder="Escribe tu pregunta...">
+          <button id="chatSendButton">Enviar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Editor en línea para ver/editar un resumen -->
+  <div id="editorContainer">
+    <div id="editorToolbar">
+      <button onclick="formatText('bold')"><strong>B</strong></button>
+      <button onclick="formatText('italic')"><em>I</em></button>
+      <button onclick="formatText('underline')"><u>U</u></button>
+      <button onclick="formatText('backColor', 'yellow')">Resaltar</button>
+    </div>
+    <div id="editorArea" contenteditable="true"></div>
+    <div id="editorActions">
+      <button class="cancel-btn" onclick="cancelEditor()">Cancelar</button>
+      <button class="save-btn" onclick="saveEditor()">Guardar Cambios</button>
+    </div>
+  </div>
+
+  <!-- Enlace al archivo JavaScript externo -->
+  <script src="script.js"></script>
+</body>
+</html>

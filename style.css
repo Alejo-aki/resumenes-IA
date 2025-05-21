@@ -1,0 +1,248 @@
+/* Reset básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f7f9fc;
+  color: #333;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+header {
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  color: #007bff;
+  margin-bottom: 5px;
+}
+
+header p {
+  color: #666;
+  font-size: 1rem;
+}
+
+.controls {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.controls button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.controls button:hover {
+  background-color: #0056b3;
+}
+
+.controls button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.left-panel {
+  flex: 2;
+  min-width: 300px;
+}
+
+.right-panel {
+  flex: 1;
+  min-width: 250px;
+}
+
+.section {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.section h2 {
+  margin-bottom: 15px;
+  color: #007bff;
+}
+
+.transcription, .summary, .chat-history, .notebooks-list {
+  background-color: #f1f3f5;
+  border-radius: 8px;
+  padding: 15px;
+  height: 300px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.notebooks-list {
+  height: auto;
+  max-height: 400px;
+  margin-top: 10px;
+}
+
+.chat-input {
+  display: flex;
+  margin-top: 10px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px 0 0 5px;
+  font-size: 1rem;
+}
+
+.chat-input button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #28a745;
+  color: #fff;
+  font-size: 1rem;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.chat-input button:hover {
+  background-color: #218838;
+}
+
+.chat-message {
+  margin-bottom: 10px;
+}
+
+.chat-message.user {
+  text-align: right;
+  color: #007bff;
+}
+
+.chat-message.ai {
+  text-align: left;
+  color: #28a745;
+}
+
+/* Estilos para el editor en línea */
+#editorContainer {
+  display: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#editorToolbar {
+  margin-bottom: 10px;
+}
+
+#editorToolbar button {
+  padding: 5px 10px;
+  margin-right: 5px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 3px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#editorToolbar button:hover {
+  background-color: #0056b3;
+}
+
+#editorArea {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  min-height: 150px;
+  overflow-y: auto;
+}
+
+#editorActions {
+  margin-top: 10px;
+  text-align: right;
+}
+
+#editorActions button {
+  padding: 8px 15px;
+  margin-left: 10px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#editorActions .save-btn {
+  background-color: #28a745;
+  color: #fff;
+}
+
+#editorActions .save-btn:hover {
+  background-color: #218838;
+}
+
+#editorActions .cancel-btn {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+#editorActions .cancel-btn:hover {
+  background-color: #c82333;
+}
+
+/* Botones para editar/eliminar en la lista */
+.record-buttons button {
+  padding: 5px 10px;
+  margin-right: 5px;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.record-buttons .edit-btn {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.record-buttons .edit-btn:hover {
+  background-color: #0056b3;
+}
+
+.record-buttons .delete-btn {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.record-buttons .delete-btn:hover {
+  background-color: #c82333;
+}
