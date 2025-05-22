@@ -12,6 +12,9 @@ const notebooksDisplay = document.getElementById("notebooksDisplay");
 const editorContainer = document.getElementById("editorContainer");
 const editorArea = document.getElementById("editorArea");
 
+// URL base para la API - ajusta según tu configuración
+//const API_URL = 'https://verbose-goldfish-r46v9x74r7pgf574j-3000.app.github.dev'; //entorno de producción
+const API_URL = 'http://172.18.0.2:3000'; 
 let recognition;
 let isRecording = false;
 let finalTranscript = "";
@@ -22,7 +25,7 @@ let currentEditNotebook = null;
 let currentEditIndex = null;
 
 // Configuración de la Web Speech API para reconocimiento de voz
-if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window ) {
   recognition = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
   recognition.lang = 'es-ES';
   recognition.continuous = true;
@@ -110,7 +113,7 @@ async function summarizeText(text) {
               ]
             }
           ]
-        })
+        } )
       }
     );
     if (!response.ok) {
@@ -163,7 +166,7 @@ Proporciona una respuesta eficiente y clara.`;
               ]
             }
           ]
-        })
+        } )
       }
     );
     if (!response.ok) {
@@ -200,71 +203,170 @@ function renderChatHistory() {
   chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
 }
 
-// FUNCIONALIDAD PARA GUARDAR, VER, EDITAR Y BORRAR CLASES EN NOTEBOKS (localStorage)
-saveClassButton.addEventListener("click", saveClass);
+// FUNCIONALIDAD PARA GUARDAR, VER, EDITAR Y BORRAR CLASES EN NOTEBOOKS (API)
+saveClassButton.addEventListener("click", testBackendConnection);
 viewClassesButton.addEventListener("click", updateNotebooksDisplay);
 
-function saveClass() {
+// Función para probar la conexión con el backend
+async function testBackendConnection() {
+  try {
+    console.log("Probando conexión con el backend...");
+    console.log("URL de la API:", API_URL);
+    
+    const response = await fetch(`${API_URL}/notebooks`);
+    console.log("Respuesta:", response);
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log("Datos recibidos:", data);
+      alert("Conexión exitosa con el backend. Ahora intentaremos guardar la clase.");
+      saveClass();
+    } else {
+      console.error("Error en la respuesta:", response.status);
+      alert("Error al conectar con el backend: " + response.status);
+    }
+  } catch (error) {
+    console.error("Error completo:", error);
+    alert("Error de conexión: " + error.message);
+  }
+}
+
+// Función para guardar una clase en un notebook
+async function saveClass() {
   const notebookName = prompt("Introduce el nombre para tu notebook (por ejemplo, 'Telecomunicaciones 1'):");
   if (!notebookName) {
     alert("Debes ingresar un nombre para el notebook.");
     return;
   }
+  
   const classRecord = {
+    notebookName: notebookName,
     transcription: transcriptionText,
-    summary: summaryText,
-    timestamp: new Date().toLocaleString()
+    summary: summaryText
   };
-  let notebooks = JSON.parse(localStorage.getItem("notebooks") || "{}");
-  if (!notebooks[notebookName]) {
-    notebooks[notebookName] = [];
-  }
-  notebooks[notebookName].push(classRecord);
-  localStorage.setItem("notebooks", JSON.stringify(notebooks));
-  alert("Clase guardada en el notebook: " + notebookName);
-}
-
-function updateNotebooksDisplay() {
-  let notebooks = JSON.parse(localStorage.getItem("notebooks") || "{}");
-  let displayHTML = "";
-  for (let notebook in notebooks) {
-    displayHTML += `<h3>${notebook}</h3>`;
-    notebooks[notebook].forEach((record, index) => {
-      displayHTML += `<div style="border: 1px solid #ccc; padding: 10px; margin: 5px 0; border-radius: 5px;">
-        <strong>Fecha:</strong> ${record.timestamp}<br>
-        <strong>Resumen:</strong> ${record.summary}<br>
-        <div class="record-buttons">
-          <button class="edit-btn" onclick="openEditor('${notebook}', ${index})">Editar</button>
-          <button class="delete-btn" onclick="deleteClass('${notebook}', ${index})">Eliminar</button>
-        </div>
-      </div>`;
+  
+  console.log("Enviando datos:", classRecord);
+  console.log("URL de la API:", API_URL);
+  
+  try {
+    // Llamada a la API para guardar la clase
+    const response = await fetch(`${API_URL}/notebooks`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(classRecord)
     });
+    
+    console.log("Respuesta del servidor:", response);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error del servidor:", errorText);
+      throw new Error(`Error del servidor: ${response.status} - ${errorText}`);
+    }
+    
+    const data = await response.json();
+    console.log("Datos recibidos:", data);
+    alert("Clase guardada en el notebook: " + notebookName);
+  } catch (error) {
+    console.error('Error completo:', error);
+    alert("Error al guardar la clase: " + error.message);
   }
-  notebooksDisplay.innerHTML = displayHTML || "No hay clases guardadas.";
-  MathJax.typesetPromise([notebooksDisplay]).catch((err) => console.error(err));
 }
 
-// Función para eliminar un registro. Si se elimina el último, también se elimina el notebook.
-function deleteClass(notebookName, index) {
-  if (!confirm("¿Estás seguro de que deseas eliminar este registro?")) return;
-  let notebooks = JSON.parse(localStorage.getItem("notebooks") || "{}");
-  notebooks[notebookName].splice(index, 1);
-  if (notebooks[notebookName].length === 0) {
-    delete notebooks[notebookName];
+// Función para actualizar la visualización de notebooks
+async function updateNotebooksDisplay() {
+  try {
+    console.log("Obteniendo notebooks desde:", `${API_URL}/notebooks`);
+    
+    // Llamada a la API para obtener todos los notebooks
+    const response = await fetch(`${API_URL}/notebooks`);
+    
+    console.log("Respuesta:", response);
+    
+    if (!response.ok) {
+      throw new Error(`Error al obtener los notebooks: ${response.status}`);
+    }
+    
+    const notebooks = await response.json();
+    console.log("Notebooks recibidos:", notebooks);
+    
+    let displayHTML = "";
+    
+    for (let notebook in notebooks) {
+      displayHTML += `<h3>${notebook}</h3>`;
+      notebooks[notebook].forEach((record, index) => {
+        displayHTML += `<div style="border: 1px solid #ccc; padding: 10px; margin: 5px 0; border-radius: 5px;">
+          <strong>Fecha:</strong> ${record.timestamp}<br>
+          <strong>Resumen:</strong> ${record.summary}<br>
+          <div class="record-buttons">
+            <button class="edit-btn" onclick="openEditor('${notebook}', ${index})">Editar</button>
+            <button class="delete-btn" onclick="deleteClass('${notebook}', ${index})">Eliminar</button>
+          </div>
+        </div>`;
+      });
+    }
+    
+    notebooksDisplay.innerHTML = displayHTML || "No hay clases guardadas.";
+    MathJax.typesetPromise([notebooksDisplay]).catch((err) => console.error(err));
+  } catch (error) {
+    console.error('Error:', error);
+    notebooksDisplay.innerHTML = "Error al cargar los notebooks: " + error.message;
   }
-  localStorage.setItem("notebooks", JSON.stringify(notebooks));
-  updateNotebooksDisplay();
+}
+
+// Función para eliminar una clase
+async function deleteClass(notebookName, index) {
+  if (!confirm("¿Estás seguro de que deseas eliminar este registro?")) return;
+  
+  try {
+    console.log(`Eliminando clase: notebook=${notebookName}, index=${index}`);
+    
+    // Llamada a la API para eliminar la clase
+    const response = await fetch(`${API_URL}/notebooks/${encodeURIComponent(notebookName)}/${index}`, {
+      method: 'DELETE'
+    });
+    
+    console.log("Respuesta:", response);
+    
+    if (!response.ok) {
+      throw new Error(`Error al eliminar la clase: ${response.status}`);
+    }
+    
+    await response.json();
+    alert("Clase eliminada correctamente");
+    updateNotebooksDisplay();
+  } catch (error) {
+    console.error('Error:', error);
+    alert("Error al eliminar la clase: " + error.message);
+  }
 }
 
 // Función para abrir el editor en línea y cargar el resumen
-function openEditor(notebookName, index) {
-  let notebooks = JSON.parse(localStorage.getItem("notebooks") || "{}");
-  let record = notebooks[notebookName][index];
-  currentEditNotebook = notebookName;
-  currentEditIndex = index;
-  editorArea.innerHTML = record.summary;
-  editorContainer.style.display = "block";
-  editorContainer.scrollIntoView({ behavior: "smooth" });
+async function openEditor(notebookName, index) {
+  try {
+    console.log(`Abriendo editor: notebook=${notebookName}, index=${index}`);
+    
+    // Llamada a la API para obtener todos los notebooks
+    const response = await fetch(`${API_URL}/notebooks`);
+    
+    if (!response.ok) {
+      throw new Error(`Error al obtener los notebooks: ${response.status}`);
+    }
+    
+    const notebooks = await response.json();
+    let record = notebooks[notebookName][index];
+    
+    currentEditNotebook = notebookName;
+    currentEditIndex = index;
+    editorArea.innerHTML = record.summary;
+    editorContainer.style.display = "block";
+    editorContainer.scrollIntoView({ behavior: "smooth" });
+  } catch (error) {
+    console.error('Error:', error);
+    alert("Error al cargar el contenido para editar: " + error.message);
+  }
 }
 
 // Función para aplicar formato en el editor (execCommand)
@@ -273,15 +375,42 @@ function formatText(command, value = null) {
 }
 
 // Función para guardar los cambios del editor
-function saveEditor() {
+async function saveEditor() {
   if (currentEditNotebook === null || currentEditIndex === null) return;
-  let notebooks = JSON.parse(localStorage.getItem("notebooks") || "{}");
-  notebooks[currentEditNotebook][currentEditIndex].summary = editorArea.innerHTML;
-  localStorage.setItem("notebooks", JSON.stringify(notebooks));
-  editorContainer.style.display = "none";
-  currentEditNotebook = null;
-  currentEditIndex = null;
-  updateNotebooksDisplay();
+  
+  const updatedData = {
+    summary: editorArea.innerHTML
+  };
+  
+  try {
+    console.log(`Guardando cambios: notebook=${currentEditNotebook}, index=${currentEditIndex}`);
+    console.log("Datos:", updatedData);
+    
+    // Llamada a la API para actualizar la clase
+    const response = await fetch(`${API_URL}/notebooks/${encodeURIComponent(currentEditNotebook)}/${currentEditIndex}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updatedData)
+    });
+    
+    console.log("Respuesta:", response);
+    
+    if (!response.ok) {
+      throw new Error(`Error al actualizar la clase: ${response.status}`);
+    }
+    
+    await response.json();
+    alert("Cambios guardados correctamente");
+    editorContainer.style.display = "none";
+    currentEditNotebook = null;
+    currentEditIndex = null;
+    updateNotebooksDisplay();
+  } catch (error) {
+    console.error('Error:', error);
+    alert("Error al guardar los cambios: " + error.message);
+  }
 }
 
 // Función para cancelar la edición
