@@ -1,0 +1,17 @@
+# Node.js
+node_modules/
+npm-debug.log
+
+# Base de datos
+backend/db/*.sqlite
+
+# Archivos de entorno
+.env
+
+# Logs
+logs
+*.log
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db

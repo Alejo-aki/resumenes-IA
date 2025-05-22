@@ -1,0 +1,22 @@
+{
+  "development": {
+    "database": {
+      "type": "sqlite",
+      "filename": "./db/notebooks.sqlite"
+    },
+    "server": {
+      "port": 3000,
+      "host": "0.0.0.0"
+    }
+  },
+  "production": {
+    "database": {
+      "type": "sqlite",
+      "filename": "./db/notebooks.sqlite"
+    },
+    "server": {
+      "port": 3000,
+      "host": "0.0.0.0"
+    }
+  }
+}
