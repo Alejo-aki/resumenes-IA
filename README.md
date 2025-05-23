@@ -62,3 +62,5 @@ docker-compose up -d
 - El backend escucha en el puerto 3000
 - El frontend se sirve a través de Apache en el puerto 80
 - Asegúrate de modificar las URLs de la API en el frontend si cambias la configuración de puertos
+
+Link de acceso de diapositivas: https://www.canva.com/design/DAGoN6BEDvI/-dIkDjybV1AnrOxSdHumDA/edit?utm_content=DAGoN6BEDvI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
